@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package auth;
+
+service Auth {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+}
+
+// LOGIN
+
+message LoginData {
+  string access_token = 1;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string status = 1;
+  string message = 2;
+  LoginData data = 3;
+}
+
+// REGISTER
+
+message RegisterRequest {
+  string role_id = 1;
+  string name = 2;
+  string email = 3;
+  string password = 4;
+}
+
+message RegisterResponse {
+  string status = 1;
+  string message = 2;
+}
+
+// UPDATE USER
+
+message UpdateUserRequest {
+  string id = 1;
+  string role_id = 2;
+  string name = 3;
+  string email = 4;
+  string password = 5;
+}
+
+message UpdateUserResponse {
+  string status = 1;
+  string message = 2;
+}
