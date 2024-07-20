@@ -9,12 +9,12 @@ import (
 	"github.com/hebobibun/grpc-auth-crud/pkg/utils"
 )
 
-type Server struct {
+type AuthServer struct {
 	H   db.Handler
 	Jwt utils.JWTwrapper
 }
 
-func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
+func (s *AuthServer) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	var user models.User
 
 	if res := s.H.DB.Where("email = ?", req.Email).First(&user); res.Error != nil {
@@ -27,7 +27,7 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 	user.Email = req.Email
 	user.Password = utils.HashPassword(req.Password)
 	user.Name = req.Name
-	// user.RoleId = req.RoleId
+	user.RoleId = req.RoleId
 
 	s.H.DB.Create(&user)
 	return &pb.RegisterResponse{
@@ -37,7 +37,7 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Reg
 
 }
 
-func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
+func (s *AuthServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	var user models.User
 
 	if res := s.H.DB.Where("email = ?", req.Email).First(&user); res.Error != nil {
@@ -71,7 +71,7 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResp
 	}, nil
 }
 
-func (s *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+func (s *AuthServer) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
 	return &pb.UpdateUserResponse{
 		Status:  "success",
 		Message: "User updated successfully",
