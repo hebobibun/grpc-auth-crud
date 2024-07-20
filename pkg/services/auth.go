@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"log"
 
 	"github.com/hebobibun/grpc-auth-crud/pkg/db"
 	"github.com/hebobibun/grpc-auth-crud/pkg/models"
@@ -17,10 +18,10 @@ type AuthServer struct {
 func (s *AuthServer) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	var user models.User
 
-	if res := s.H.DB.Where("email = ?", req.Email).First(&user); res.Error != nil {
+	if res := s.H.DB.Where("email = ?", req.Email).First(&user); res.Error == nil {
 		return &pb.RegisterResponse{
 			Status:  "error",
-			Message: "User already exists",
+			Message: "Email already exists",
 		}, nil
 	}
 
@@ -29,7 +30,15 @@ func (s *AuthServer) Register(ctx context.Context, req *pb.RegisterRequest) (*pb
 	user.Name = req.Name
 	user.RoleId = req.RoleId
 
-	s.H.DB.Create(&user)
+	err := s.H.DB.Create(&user)
+	log.Println(err)
+	if err != nil {
+		return &pb.RegisterResponse{
+			Status:  "error",
+			Message: "Error creating user",
+		}, nil
+	}
+
 	return &pb.RegisterResponse{
 		Status:  "success",
 		Message: "User registered successfully",

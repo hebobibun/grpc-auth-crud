@@ -78,7 +78,6 @@ type AuthServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
-	mustEmbedUnimplementedAuthServer()
 }
 
 // UnimplementedAuthServer must be embedded to have forward compatible implementations.
